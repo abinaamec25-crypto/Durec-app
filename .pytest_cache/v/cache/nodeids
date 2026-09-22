@@ -1,0 +1,18 @@
+[
+  "tests/test_duplicate_detection.py::test_exact_duplicate_detection",
+  "tests/test_duplicate_detection.py::test_heterogeneous_schema_partial_duplicate",
+  "tests/test_duplicate_detection.py::test_multi_file_heterogeneous_workflow",
+  "tests/test_hashing.py::test_hash_function_engine_trace",
+  "tests/test_hashing.py::test_hash_functions_deterministic",
+  "tests/test_hashing.py::test_hash_table_collision_tracking",
+  "tests/test_hashing.py::test_hash_table_duplicate_detection_via_chaining",
+  "tests/test_hashing.py::test_hash_table_insert_and_search",
+  "tests/test_normalizer.py::test_field_mapper",
+  "tests/test_normalizer.py::test_order_independent_hash_key",
+  "tests/test_normalizer.py::test_record_normalizer_value_cleaning",
+  "tests/test_parser.py::test_csv_parser",
+  "tests/test_parser.py::test_json_parser",
+  "tests/test_parser.py::test_jsonl_parser",
+  "tests/test_parser.py::test_parser_manager_detection",
+  "tests/test_parser.py::test_tsv_parser"
+]

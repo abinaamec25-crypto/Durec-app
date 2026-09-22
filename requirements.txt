@@ -1,0 +1,10 @@
+# Anna University Regulation 2025 - Data Structures Project
+# Title: Duplicate Record Detection Using Hashing Technique
+# Dependencies for Web Dashboard, Multi-Format Ingestion, and Test Suite
+
+Flask>=2.3.0
+openpyxl>=3.1.0
+xlrd>=2.0.1
+pypdf>=3.9.0
+python-docx>=0.8.11
+pytest>=7.2.0

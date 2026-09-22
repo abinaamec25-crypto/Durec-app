@@ -1,0 +1,29 @@
+--- RECORD 1 ---
+Name: Arun Kumar
+Email: arun@gmail.com
+Phone: 9876543210
+Department: CSE
+
+--- RECORD 2 ---
+Name: Gautham Menon
+Email: gautham.m@gmail.com
+Phone: 9840112233
+Department: IT
+
+--- RECORD 3 ---
+Name: Shalini Venkatesh
+Email: shalini.v@gmail.com
+Phone: 9791223344
+Department: ECE
+
+--- RECORD 4 ---
+Name: Gautham Menon
+Email: gautham.m@gmail.com
+Phone: 9840112233
+Department: IT
+
+--- RECORD 5 ---
+Name: ARUN KUMAR
+Email: arun@gmail.com
+Phone: 9876543210
+Department: CSE

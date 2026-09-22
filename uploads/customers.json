@@ -1,0 +1,38 @@
+[
+  {
+    "customer_name": "Arun Kumar",
+    "email_address": "arun@gmail.com",
+    "phone_number": "+91-98765-43210",
+    "location": "Chennai"
+  },
+  {
+    "customer_name": "Lakshmi Narayanan",
+    "email_address": "lakshmi.n@gmail.com",
+    "phone_number": "9841122334",
+    "location": "Coimbatore"
+  },
+  {
+    "customer_name": "Suresh Gopinath",
+    "email_address": "suresh.g@gmail.com",
+    "phone_number": "9790233445",
+    "location": "Madurai"
+  },
+  {
+    "customer_name": "Lakshmi Narayanan",
+    "email_address": "lakshmi.n@gmail.com",
+    "phone_number": "9841122334",
+    "location": "Coimbatore"
+  },
+  {
+    "customer_name": "Rohan Deshmukh",
+    "email_address": "rohan.d@gmail.com",
+    "phone_number": "9940344556",
+    "location": "Bangalore"
+  },
+  {
+    "customer_name": "Arun K.",
+    "email_address": "arun@gmail.com",
+    "phone_number": "9876543210",
+    "location": "Chennai"
+  }
+]

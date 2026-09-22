@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Duplicate Record Detection Using Hashing Technique | Anna University R2025</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+  <!-- Header Bar -->
+  <header class="app-header" id="app-header">
+    <div class="header-left">
+      <div class="academic-badge" id="academic-badge">Anna University R2025</div>
+      <h1 class="app-title" id="app-title">Duplicate Record Detection Using Hashing Technique</h1>
+      <p class="app-subtitle" id="app-subtitle">Data Structures Project | Separate Chaining & Multi-Format Ingestion</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-secondary" id="btn-load-sample" title="Load bundled sample datasets for instant demonstration">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6 6h10M6 10h10"/></svg>
+        Load Sample Datasets
+      </button>
+      <a class="btn btn-primary" id="btn-download-zip" href="/api/download-zip" download="duplicate-record-detection-hashing.zip" title="Download entire working Python project ZIP">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Download Project ZIP
+      </a>
+      <button class="btn btn-danger" id="btn-reset" title="Clear current analysis and uploaded files">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+        Reset
+      </button>
+    </div>
+  </header>
+
+  <!-- Navigation Tabs -->
+  <nav class="nav-tabs" id="nav-tabs">
+    <button class="tab-btn active" data-tab="dashboard" id="tab-btn-dashboard">
+      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+      Dashboard
+    </button>
+    <button class="tab-btn" data-tab="upload" id="tab-btn-upload">
+      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      Upload & Datasets
+    </button>
+    <button class="tab-btn" data-tab="duplicates" id="tab-btn-duplicates">
+      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+      Duplicate Groups (<span id="badge-dup-count">0</span>)
+    </button>
+    <button class="tab-btn" data-tab="unique" id="tab-btn-unique">
+      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      Unique Records (<span id="badge-uniq-count">0</span>)
+    </button>
+    <button class="tab-btn" data-tab="raw" id="tab-btn-raw">
+      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      Raw Records
+    </button>
+    <button class="tab-btn" data-tab="visualization" id="tab-btn-visualization">
+      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+      Hashing Visualization
+    </button>
+    <button class="tab-btn" data-tab="viva" id="tab-btn-viva">
+      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      Viva & Academic Guide
+    </button>
+  </nav>
+
+  <!-- Notification Banner -->
+  <div id="notification-banner" class="notification-banner hidden"></div>
+
+  <!-- Main Content Container -->
+  <main class="main-container" id="main-container">
+    
+    <!-- TAB 1: DASHBOARD -->
+    <section class="tab-content active" id="view-dashboard">
+      <div class="metrics-grid">
+        <div class="metric-card" id="card-total-files">
+          <div class="metric-header">
+            <span class="metric-label">Total Files</span>
+            <span class="metric-icon file-icon">📁</span>
+          </div>
+          <div class="metric-value" id="val-total-files">0</div>
+          <div class="metric-sub" id="sub-total-files">Formats: CSV, JSON, XLSX, PDF, DOCX, TXT</div>
+        </div>
+
+        <div class="metric-card" id="card-total-records">
+          <div class="metric-header">
+            <span class="metric-label">Total Records</span>
+            <span class="metric-icon record-icon">📄</span>
+          </div>
+          <div class="metric-value" id="val-total-records">0</div>
+          <div class="metric-sub" id="sub-total-records">Normalized across schemas</div>
+        </div>
+
+        <div class="metric-card highlight-card" id="card-unique-records">
+          <div class="metric-header">
+            <span class="metric-label">Unique Records</span>
+            <span class="metric-icon check-icon">✓</span>
+          </div>
+          <div class="metric-value" id="val-unique-records">0</div>
+          <div class="metric-sub" id="sub-unique-records">Master records in Hash Table</div>
+        </div>
+
+        <div class="metric-card danger-card" id="card-duplicate-records">
+          <div class="metric-header">
+            <span class="metric-label">Duplicate Records</span>
+            <span class="metric-icon alert-icon">⚠</span>
+          </div>
+          <div class="metric-value" id="val-duplicate-records">0</div>
+          <div class="metric-sub" id="sub-duplicate-records"><span id="val-duplicate-pct">0%</span> of dataset</div>
+        </div>
+
+        <div class="metric-card" id="card-collisions">
+          <div class="metric-header">
+            <span class="metric-label">Hash Collisions</span>
+            <span class="metric-icon hash-icon">#</span>
+          </div>
+          <div class="metric-value" id="val-collisions">0</div>
+          <div class="metric-sub" id="sub-collisions">Resolved via Separate Chaining</div>
+        </div>
+
+        <div class="metric-card" id="card-processing-time">
+          <div class="metric-header">
+            <span class="metric-label">Processing Time</span>
+            <span class="metric-icon clock-icon">⚡</span>
+          </div>
+          <div class="metric-value" id="val-processing-time">0 ms</div>
+          <div class="metric-sub" id="sub-processing-time">Average Search: O(1)</div>
+        </div>
+      </div>
+
+      <!-- Quick Analysis Control Bar -->
+      <div class="panel-card config-panel" id="dashboard-config-panel">
+        <div class="panel-header">
+          <h3>Algorithm & Hash Table Settings</h3>
+          <span class="badge badge-info">Data Structure Parameters</span>
+        </div>
+        <div class="config-grid">
+          <div class="form-group">
+            <label for="select-algorithm">Hash Function</label>
+            <select id="select-algorithm" class="form-control">
+              <option value="polynomial" selected>Polynomial Rolling Hash (p=31, mod 2^32)</option>
+              <option value="djb2">DJB2 (Dan Bernstein - Base 33)</option>
+              <option value="fnv1a">FNV-1a (32-bit Prime XOR)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="select-capacity">Initial Table Capacity (M - Prime)</label>
+            <select id="select-capacity" class="form-control">
+              <option value="31">31 (High Collisions Demo)</option>
+              <option value="53">53 (Moderate Size)</option>
+              <option value="101" selected>101 (Standard Prime)</option>
+              <option value="211">211 (Large Prime)</option>
+              <option value="401">401 (Sparse Table)</option>
+            </select>
+          </div>
+          <div class="form-group btn-group-align">
+            <button class="btn btn-primary btn-block" id="btn-run-analysis">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              Run Duplicate Analysis
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Breakdown Grid: Duplicate Tiers & File Sources -->
+      <div class="two-col-grid">
+        <div class="panel-card" id="panel-dup-breakdown">
+          <div class="panel-header">
+            <h3>Duplication Tiers</h3>
+            <span class="text-muted">Hierarchical Classification</span>
+          </div>
+          <div class="tier-list">
+            <div class="tier-item exact-tier">
+              <div class="tier-info">
+                <span class="tier-badge">Exact Duplicate</span>
+                <p class="tier-desc">100% match on normalized primary composite key</p>
+              </div>
+              <div class="tier-count" id="count-exact">0</div>
+            </div>
+            <div class="tier-item partial-tier">
+              <div class="tier-info">
+                <span class="tier-badge">Partial Duplicate</span>
+                <p class="tier-desc">Matches identifying key (email/phone/ID) with differing fields</p>
+              </div>
+              <div class="tier-count" id="count-partial">0</div>
+            </div>
+            <div class="tier-item possible-tier">
+              <div class="tier-info">
+                <span class="tier-badge">Possible Duplicate</span>
+                <p class="tier-desc">High name similarity (edit distance / token overlap)</p>
+              </div>
+              <div class="tier-count" id="count-possible">0</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel-card" id="panel-file-breakdown">
+          <div class="panel-header">
+            <h3>Ingested Data Sources</h3>
+            <span class="text-muted" id="file-sources-count">0 files loaded</span>
+          </div>
+          <div class="file-sources-list" id="file-sources-container">
+            <div class="empty-state">No files uploaded yet. Click "Load Sample Datasets" or go to the Upload tab.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: UPLOAD & DATASETS -->
+    <section class="tab-content" id="view-upload">
+      <div class="panel-card" id="upload-panel">
+        <div class="panel-header">
+          <h3>Multi-Format Data Ingestion</h3>
+          <span class="badge badge-primary">Supports Mixed Schemas</span>
+        </div>
+        <p class="panel-desc">
+          Upload structured spreadsheets, databases, or documents. The built-in <code>ParserManager</code> auto-detects format, extracts rows, unifies field names using <code>FieldMapper</code>, and standardizes values before hashing.
+        </p>
+
+        <!-- Drag & Drop Zone -->
+        <div class="drop-zone" id="drop-zone">
+          <svg class="drop-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <h4>Drag & Drop Files Here</h4>
+          <p class="drop-sub">or click to browse from your device</p>
+          <div class="supported-tags">
+            <span class="tag">CSV (.csv)</span>
+            <span class="tag">TSV (.tsv)</span>
+            <span class="tag">Excel (.xlsx, .xls)</span>
+            <span class="tag">JSON (.json)</span>
+            <span class="tag">JSON Lines (.jsonl)</span>
+            <span class="tag">PDF (.pdf)</span>
+            <span class="tag">Word (.docx)</span>
+            <span class="tag">Text (.txt)</span>
+          </div>
+          <input type="file" id="file-input" multiple accept=".csv,.tsv,.json,.jsonl,.ndjson,.xlsx,.xls,.pdf,.docx,.txt" style="display:none;">
+        </div>
+
+        <!-- Uploaded Files List -->
+        <div class="uploaded-files-section" id="uploaded-files-section">
+          <div class="section-title-bar">
+            <h4>Uploaded Datasets (<span id="active-file-count">0</span>)</h4>
+            <button class="btn btn-sm btn-secondary" id="btn-clear-files">Clear All</button>
+          </div>
+          <div class="file-cards-grid" id="uploaded-file-cards">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: DUPLICATE GROUPS -->
+    <section class="tab-content" id="view-duplicates">
+      <div class="panel-card" id="duplicates-panel">
+        <div class="panel-header">
+          <h3>Detected Duplicate Groups</h3>
+          <div class="search-box">
+            <input type="text" id="dup-search-input" placeholder="Search duplicate groups..." class="form-control form-control-sm">
+          </div>
+        </div>
+        <p class="panel-desc">
+          Records clustered under their primary/master record. Each group specifies whether it was an <strong>Exact Duplicate</strong>, <strong>Partial Duplicate</strong> (heterogeneous schema match), or <strong>Possible Duplicate</strong>, along with matched fields and confidence percentage.
+        </p>
+
+        <div class="duplicate-groups-list" id="duplicate-groups-container">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 4: UNIQUE RECORDS -->
+    <section class="tab-content" id="view-unique">
+      <div class="panel-card" id="unique-panel">
+        <div class="panel-header">
+          <h3>Deduplicated Master Records</h3>
+          <div class="table-actions">
+            <input type="text" id="unique-search-input" placeholder="Search unique records..." class="form-control form-control-sm">
+          </div>
+        </div>
+        <div class="table-responsive">
+          <table class="data-table" id="unique-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Source File</th>
+                <th>Canonical Name</th>
+                <th>Canonical Email</th>
+                <th>Canonical Phone</th>
+                <th>Department</th>
+                <th>Bucket #</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="unique-table-body">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+        <div class="pagination-bar" id="unique-pagination">
+          <span class="page-info" id="unique-page-info">Showing 0 of 0</span>
+          <div class="page-buttons">
+            <button class="btn btn-sm btn-secondary" id="btn-unique-prev" disabled>Previous</button>
+            <button class="btn btn-sm btn-secondary" id="btn-unique-next" disabled>Next</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 5: RAW RECORDS -->
+    <section class="tab-content" id="view-raw">
+      <div class="panel-card" id="raw-panel">
+        <div class="panel-header">
+          <h3>Raw Ingested Records Explorer</h3>
+          <div class="table-actions">
+            <select id="select-raw-filter" class="form-control form-control-sm">
+              <option value="all">All Records</option>
+              <option value="duplicate">Duplicates Only</option>
+              <option value="unique">Unique Only</option>
+            </select>
+            <input type="text" id="raw-search-input" placeholder="Search raw values..." class="form-control form-control-sm">
+          </div>
+        </div>
+        <div class="table-responsive">
+          <table class="data-table" id="raw-table">
+            <thead>
+              <tr>
+                <th>Record ID</th>
+                <th>Source</th>
+                <th>Status</th>
+                <th>Raw Extracted Data</th>
+                <th>Normalized Hash Key</th>
+                <th>Trace</th>
+              </tr>
+            </thead>
+            <tbody id="raw-table-body">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+        <div class="pagination-bar" id="raw-pagination">
+          <span class="page-info" id="raw-page-info">Showing 0 of 0</span>
+          <div class="page-buttons">
+            <button class="btn btn-sm btn-secondary" id="btn-raw-prev" disabled>Previous</button>
+            <button class="btn btn-sm btn-secondary" id="btn-raw-next" disabled>Next</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 6: HASHING VISUALIZATION -->
+    <section class="tab-content" id="view-visualization">
+      <div class="panel-card" id="vis-panel">
+        <div class="panel-header">
+          <h3>Interactive Hash Table & Separate Chaining Visualizer</h3>
+          <span class="badge badge-info" id="vis-table-info">Separate Chaining Structure</span>
+        </div>
+        <p class="panel-desc">
+          Inspect how keys map into hash table buckets. Observe how <strong>hash collisions</strong> are resolved by chaining nodes in linked lists, and how <strong>duplicate detection</strong> is performed by traversing the chain and comparing normalized keys in O(1) average time.
+        </p>
+
+        <!-- Stats Bar -->
+        <div class="hash-stats-bar" id="hash-stats-bar">
+          <div class="stat-pill"><span class="stat-pill-label">Table Size (M):</span> <span class="stat-pill-val" id="vis-stat-m">101</span></div>
+          <div class="stat-pill"><span class="stat-pill-label">Elements (N):</span> <span class="stat-pill-val" id="vis-stat-n">0</span></div>
+          <div class="stat-pill"><span class="stat-pill-label">Load Factor (α):</span> <span class="stat-pill-val" id="vis-stat-alpha">0.00</span></div>
+          <div class="stat-pill"><span class="stat-pill-label">Collisions:</span> <span class="stat-pill-val" id="vis-stat-collisions">0</span></div>
+          <div class="stat-pill"><span class="stat-pill-label">Max Chain:</span> <span class="stat-pill-val" id="vis-stat-maxchain">0</span></div>
+          <div class="stat-pill"><span class="stat-pill-label">Empty Buckets:</span> <span class="stat-pill-val" id="vis-stat-empty">0</span></div>
+        </div>
+
+        <!-- Interactive Record Trace Simulator -->
+        <div class="trace-simulator-card" id="trace-simulator-card">
+          <div class="sim-header">
+            <h4>Record Hashing Mathematical Trace Simulator</h4>
+            <div class="sim-select">
+              <label for="select-trace-record">Select Record to Trace:</label>
+              <select id="select-trace-record" class="form-control form-control-sm">
+                <option value="">-- Choose a record to visualize --</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="trace-display" id="trace-display">
+            <div class="empty-state">Select a record above or click "Trace" on any record to inspect the exact polynomial calculation, modulo arithmetic, and bucket traversal steps.</div>
+          </div>
+        </div>
+
+        <!-- Hash Bucket Chain Grid -->
+        <div class="bucket-section-header">
+          <h4>Hash Table Bucket Array (First 50 Buckets)</h4>
+          <span class="text-muted">Green = Occupied | Blue = Chained Collision | Gray = Empty</span>
+        </div>
+        <div class="bucket-grid" id="bucket-grid">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 7: VIVA & ACADEMIC GUIDE -->
+    <section class="tab-content" id="view-viva">
+      <div class="panel-card" id="viva-panel">
+        <div class="panel-header">
+          <h3>Anna University Regulation 2025 | Viva Voce & Academic Guide</h3>
+          <span class="badge badge-primary">Data Structures (CS3301 / R2025)</span>
+        </div>
+        <p class="panel-desc">
+          Comprehensive academic explanations, time and space complexity analyses, mathematical formulas, and prepared viva questions designed for high scoring in college practical and project evaluations.
+        </p>
+
+        <div class="viva-qa-accordion">
+          
+          <div class="qa-item">
+            <div class="qa-question">1. What is Hashing and why is it used for duplicate detection?</div>
+            <div class="qa-answer">
+              <p><strong>Hashing</strong> is a technique to convert a large or variable-length key (such as a composite student or customer record string) into a fixed-size integer value using a mathematical hash function. This integer is mapped to an index in a hash table.</p>
+              <p>For duplicate detection, naive comparison requires comparing every record with every other record, resulting in <strong>O(n²)</strong> time complexity. Sorting-based detection takes <strong>O(n log n)</strong> time. With hashing, we compute the record's hash key and look up its bucket in <strong>O(1) average time</strong>, reducing total processing time to <strong>O(n)</strong>.</p>
+            </div>
+          </div>
+
+          <div class="qa-item">
+            <div class="qa-question">2. What is a Hash Table and what is Load Factor (α)?</div>
+            <div class="qa-answer">
+              <p>A <strong>Hash Table</strong> is a data structure that implements an associative array abstract data type, mapping keys to values using a hash function to compute an index into an array of buckets.</p>
+              <p>The <strong>Load Factor (α)</strong> is defined mathematically as:</p>
+              <code>α = N / M</code>
+              <p>where <em>N</em> is the number of elements inserted and <em>M</em> is the capacity (number of buckets). When α exceeds a threshold (typically 0.75), performance degrades, triggering dynamic rehashing to a larger prime table capacity.</p>
+            </div>
+          </div>
+
+          <div class="qa-item">
+            <div class="qa-question">3. What is a Hash Collision and how does Separate Chaining resolve it?</div>
+            <div class="qa-answer">
+              <p>A <strong>Hash Collision</strong> occurs when two distinct keys <em>k₁ ≠ k₂</em> produce the exact same bucket index: <code>H(k₁) % M == H(k₂) % M</code>. By the Pigeonhole Principle, collisions are inevitable whenever the key universe is larger than table capacity <em>M</em>.</p>
+              <p>In <strong>Separate Chaining</strong>, each bucket in the hash table points to the head of a linked list (or chain) of entries that hash to that same index. When a new key hashes to an occupied bucket, we traverse the chain to check if an identical key already exists (detecting a duplicate); if not, the new node is appended in O(1) time at the head.</p>
+            </div>
+          </div>
+
+          <div class="qa-item">
+            <div class="qa-question">4. Which Hash Functions are implemented in this project?</div>
+            <div class="qa-answer">
+              <ul>
+                <li><strong>Polynomial Rolling Hash:</strong> <code>H(s) = (∑ s[i] · pⁱ) mod 2³²</code> with prime base <em>p = 31</em>. Ideal for string keys and compiler symbol tables.</li>
+                <li><strong>DJB2 (Dan Bernstein):</strong> <code>hash = ((hash << 5) + hash) + char = hash * 33 + char</code> starting from initial seed 5381.</li>
+                <li><strong>FNV-1a (32-bit):</strong> <code>hash = (hash ⊕ char) · FNV_PRIME</code> starting from offset basis 2166136261.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="qa-item">
+            <div class="qa-question">5. How does the system handle records with Different Schemas?</div>
+            <div class="qa-answer">
+              <p>The system separates parsing from matching using an academic 4-stage pipeline:</p>
+              <ol>
+                <li><strong>Parser Layer:</strong> Extracts raw dictionaries from CSV, TSV, XLSX, XLS, JSON, JSONL, PDF, DOCX, and TXT.</li>
+                <li><strong>FieldMapper:</strong> Unifies heterogeneous column names (e.g. <code>student_name</code>, <code>full_name</code>, <code>customer_name</code> → canonical <code>name</code>).</li>
+                <li><strong>RecordNormalizer:</strong> Normalizes case, removes honorifics, collapses whitespace, canonicalizes phone numbers and emails, and creates an order-independent composite key by sorting canonical field keys alphabetically.</li>
+                <li><strong>Multi-Tier Hashing:</strong> Primary table catches exact duplicates; secondary hash tables on strong identifiers (email, phone, student ID) catch partial duplicates across heterogeneous schemas.</li>
+              </ol>
+            </div>
+          </div>
+
+          <div class="qa-item">
+            <div class="qa-question">6. Complete Time and Space Complexity Analysis</div>
+            <div class="qa-answer">
+              <table class="complexity-table">
+                <thead>
+                  <tr>
+                    <th>Operation / Algorithm</th>
+                    <th>Average Case</th>
+                    <th>Worst Case</th>
+                    <th>Space Complexity</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Hash Computation H(s)</td>
+                    <td>O(k) (k = key length)</td>
+                    <td>O(k)</td>
+                    <td>O(1) auxiliary</td>
+                  </tr>
+                  <tr>
+                    <td>Hash Table Insert</td>
+                    <td>O(1 + α) ≈ O(1)</td>
+                    <td>O(N) (all collide in one bucket)</td>
+                    <td>O(1) per node</td>
+                  </tr>
+                  <tr>
+                    <td>Hash Table Search / Lookup</td>
+                    <td>O(1 + α/2) ≈ O(1)</td>
+                    <td>O(N)</td>
+                    <td>O(1)</td>
+                  </tr>
+                  <tr>
+                    <td>Overall Duplicate Detection</td>
+                    <td>O(N · k)</td>
+                    <td>O(N² · k)</td>
+                    <td>O(N + M)</td>
+                  </tr>
+                  <tr>
+                    <td>Brute Force Duplicate Detection</td>
+                    <td>O(N² · k)</td>
+                    <td>O(N² · k)</td>
+                    <td>O(1)</td>
+                  </tr>
+                  <tr>
+                    <td>Sorting-Based Duplicate Detection</td>
+                    <td>O(N log N · k)</td>
+                    <td>O(N log N · k)</td>
+                    <td>O(N)</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Modal for Full Record Detail -->
+  <div class="modal-backdrop hidden" id="record-modal-backdrop">
+    <div class="modal-dialog" id="record-modal-dialog">
+      <div class="modal-header">
+        <h3 id="modal-record-title">Record Inspection</h3>
+        <button class="modal-close-btn" id="modal-close-btn">&times;</button>
+      </div>
+      <div class="modal-body" id="modal-record-body">
+        <!-- Injected dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="/static/js/upload.js"></script>
+  <script src="/static/js/dashboard.js"></script>
+  <script src="/static/js/visualization.js"></script>
+  <script src="/static/js/app.js"></script>
+</body>
+</html>

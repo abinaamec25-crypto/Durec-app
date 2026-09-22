@@ -1,0 +1,6 @@
+{
+  "name": "Duplicate Record Detection Using Hashing Technique",
+  "description": "Anna University R2025 Data Structures project for multi-format duplicate record detection using custom separate-chaining hash tables.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
