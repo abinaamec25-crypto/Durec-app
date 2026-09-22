@@ -1,7 +1,7 @@
 # Duplicate Record Detection Using Hashing Technique
 
 **Anna University Regulation 2025 | B.E. Computer Science and Engineering**  
-**Course:** Data Structures (CS3301 / R2025 Laboratory & Mini-Project)  
+**Course:** Data Structures (CS25C08/ R2025 Laboratory & Mini-Project)  
 **Title:** *Duplicate Record Detection Using Hashing Technique with Separate Chaining*
 
 ---
